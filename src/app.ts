@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 
 class App {
   public readonly express: express.Application
@@ -10,6 +11,7 @@ class App {
 
   middlewares (): void {
     this.express.use(express.json())
+    this.express.use(cors())
   }
 }
 
