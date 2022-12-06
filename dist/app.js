@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
+const routes_1 = __importDefault(require("./app/routes"));
 class App {
     constructor() {
         this.express = (0, express_1.default)();
@@ -15,6 +16,7 @@ class App {
         this.express.use(express_1.default.json());
         this.express.use((0, cors_1.default)());
         this.express.use((0, helmet_1.default)());
+        this.express.use(routes_1.default);
     }
 }
 exports.default = new App().express;
