@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import validator from 'validator'
 
 import prismaClient from '../prisma'
-import { serverError } from '../helpers/errors'
+import { serverError, badRequest } from '../helpers/errors'
 
 export default class User {
   public async register (req: Request, res: Response): Promise<Response> {
@@ -11,11 +11,11 @@ export default class User {
       const { email, password } = req.body
 
       if (!password.trim()) {
-        return res.status(400).json({ message: 'Senha em branco' })
+        return badRequest(res, 'Senha em branco')
       }
 
       if (!validator.isEmail(email)) {
-        return res.status(400).json({ message: 'Email inválido' })
+        return badRequest(res, 'Email inválido')
       }
 
       const encriptedPassword = await bcrypt.hash(password, 10)
