@@ -13,5 +13,6 @@ routes.get('/products', products.getProducts)
 
 // User
 routes.post('/user/register', user.register)
+routes.post('/user/login', user.login)
 
 export default routes
