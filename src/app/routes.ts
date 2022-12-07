@@ -12,6 +12,6 @@ const user = new User()
 routes.get('/products', products.getProducts)
 
 // User
-routes.post('/user', user.register)
+routes.post('/user/register', user.register)
 
 export default routes
