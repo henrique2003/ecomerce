@@ -18,6 +18,10 @@ export default class User {
         return badRequest(res, 'Email inválido')
       }
 
+      if (prismaClient.user.findUnique({ where: { email } })) {
+        return badRequest(res, 'Email já esta em uso')
+      }
+
       const encriptedPassword = await bcrypt.hash(password, 10)
 
       const newUser = await prismaClient.user.create({
