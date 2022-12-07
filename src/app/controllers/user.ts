@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import validator from 'validator'
 
 import prismaClient from '../prisma'
-import { serverError, badRequest } from '../helpers/errors'
+import { serverError, badRequest, success } from '../helpers/response-status'
 
 export default class User {
   public async register (req: Request, res: Response): Promise<Response> {
@@ -43,6 +43,7 @@ export default class User {
     try {
       const { email, password } = req.body
 
+      // Validations
       if (!password.trim()) {
         return badRequest(res, 'Senha em branco')
       }
@@ -51,6 +52,7 @@ export default class User {
         return badRequest(res, 'Email inválido')
       }
 
+      // Login
       const user = await prismaClient.user.findUnique({ where: { email } })
 
       if (!user) {
@@ -63,7 +65,7 @@ export default class User {
 
       delete user.password
 
-      return res.status(200).json({ user })
+      return success(res, { user })
     } catch (error) {
       return serverError(res, error)
     }
