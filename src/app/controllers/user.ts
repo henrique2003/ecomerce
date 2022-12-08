@@ -1,11 +1,10 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import validator from 'validator'
-import jwt from 'jsonwebtoken'
-import 'dotenv/config'
 
 import prismaClient from '../prisma'
 import { serverError, badRequest, success } from '../helpers/response-status'
+import generateToken from '../utils/generateToken'
 
 export default class User {
   public async register (req: Request, res: Response): Promise<Response> {
@@ -36,7 +35,7 @@ export default class User {
       delete newUser.password
 
       // Generate token
-      const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET_ID, { expiresIn: '1d' })
+      const token = generateToken(newUser.id)
 
       return res.status(201).json({ newUser, token })
     } catch (error) {
@@ -70,8 +69,8 @@ export default class User {
 
       delete user.password
 
-      // Generate token
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET_ID, { expiresIn: '1d' })
+      // Generate token}, process.env.JWT_SECRET_ID, { expiresIn: '1d' })
+      const token = generateToken(user.id)
 
       return success(res, { user, token })
     } catch (error) {
