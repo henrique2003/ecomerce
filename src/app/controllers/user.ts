@@ -84,12 +84,7 @@ export default class User {
 
       let { productId } = body
 
-      productId = parseInt(productId)
-
-      // Validation
-      if (typeof productId !== 'number') {
-        return badRequest(res, 'Id do produto inválido')
-      }
+      productId = productId.toString()
 
       // Verify if exist product
       const product = await prismaClient.product.findUnique({ where: { id: productId } })
@@ -98,28 +93,68 @@ export default class User {
         return badRequest(res, 'Produto inválido')
       }
 
+      const { id, cost, title, type } = product
+
       // Update cart from user
-      const user = await prismaClient.user.update({
+      const updatedUser = await prismaClient.user.update({
         where: { id: userId },
         data: {
           cart: {
-            set: {
-              id: product.id
+            connectOrCreate: {
+              where: { id },
+              create: {
+                cost,
+                id,
+                title,
+                type
+              }
             }
           }
-        },
-        include: {
-          cart: true
         }
       })
 
-      delete user.password
-
-      return success(res, user)
+      return success(res, updatedUser)
     } catch (error) {
+      console.log(error.message)
+
       return serverError(res, error)
     }
   }
+
+  // public async removeProductOnCart (req: Request, res: Response): Promise<Response> {
+  //   try {
+  //     const { userId, body } = req
+
+  //     let { productId } = body
+
+  //     productId = productId.toString()
+
+  //     // Verify if exist product
+  //     if (!await prismaClient.product.findUnique({ where: { id: productId } })) {
+  //       return badRequest(res, 'Produto inválido')
+  //     }
+  //     console.log('1')
+
+  //     // Update cart from user
+  //     const user = await prismaClient.user.update({
+  //       where: { id: userId },
+  //       data: {
+  //         cart: {
+  //           delete: {
+  //             id: productId
+  //           }
+  //         }
+  //       },
+  //       select: {
+  //         password: false
+  //       }
+  //     })
+
+  //     return res.status(202).json(user)
+  //   } catch (error) {
+  //     return serverError(res, error)
+  //   }
+  // }
 
   public async loadUser (req: Request, res: Response): Promise<Response> {
     try {
@@ -131,6 +166,7 @@ export default class User {
           cart: true
         }
       })
+      delete user.password
 
       return success(res, user)
     } catch (error) {

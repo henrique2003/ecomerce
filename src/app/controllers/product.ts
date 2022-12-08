@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { v4 as uuidv4 } from 'uuid'
 
 import prismaClient from '../prisma/index'
 import { serverError, success, createSuccess } from '../helpers/response-status'
@@ -20,6 +21,7 @@ export default class Products {
 
       const product = await prismaClient.product.create({
         data: {
+          id: uuidv4(),
           cost,
           title,
           type
@@ -28,6 +30,8 @@ export default class Products {
 
       return createSuccess(res, product)
     } catch (error) {
+      console.log(error.message)
+
       return serverError(res, error)
     }
   }
