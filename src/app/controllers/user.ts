@@ -82,15 +82,17 @@ export default class User {
     try {
       const { userId, body } = req
 
-      const { productId } = body
+      let { productId } = body
+
+      productId = parseInt(productId)
 
       // Validation
-      if (typeof parseInt(productId) !== 'number') {
+      if (typeof productId !== 'number') {
         return badRequest(res, 'Id do produto inválido')
       }
 
       // Verify if exist product
-      const product = await prismaClient.product.findUnique({ where: { id: parseInt(productId) } })
+      const product = await prismaClient.product.findUnique({ where: { id: productId } })
 
       if (!product) {
         return badRequest(res, 'Produto inválido')
