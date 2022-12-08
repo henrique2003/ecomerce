@@ -69,7 +69,7 @@ export default class User {
 
       delete user.password
 
-      // Generate token}, process.env.JWT_SECRET_ID, { expiresIn: '1d' })
+      // Generate token
       const token = generateToken(user.id)
 
       return success(res, { user, token })

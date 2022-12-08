@@ -9,7 +9,8 @@ const products = new Products()
 const user = new User()
 
 // Products
-routes.get('/products', products.getProducts)
+routes.get('/products', products.get)
+routes.post('/products', products.create)
 
 // User
 routes.post('/user/register', user.register)
