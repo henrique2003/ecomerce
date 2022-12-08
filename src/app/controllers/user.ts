@@ -115,8 +115,23 @@ export default class User {
 
       return success(res, user)
     } catch (error) {
-      console.log(error.message)
+      return serverError(res, error)
+    }
+  }
 
+  public async loadUser (req: Request, res: Response): Promise<Response> {
+    try {
+      const user = await prismaClient.user.findUnique({
+        where: {
+          id: req.userId
+        },
+        include: {
+          cart: true
+        }
+      })
+
+      return success(res, user)
+    } catch (error) {
       return serverError(res, error)
     }
   }
