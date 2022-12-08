@@ -11,3 +11,7 @@ export function badRequest (res: Response, message: string): Response {
 export function success (res: Response, data: any): Response {
   return res.status(200).json(data)
 }
+
+export function unauthorized (res: Response): Response {
+  return res.status(401).json({ message: 'Não autorizado' })
+}

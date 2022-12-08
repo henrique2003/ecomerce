@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import validator from 'validator'
+import jwt from 'jsonwebtoken'
+import 'dotenv/config'
 
 import prismaClient from '../prisma'
 import { serverError, badRequest, success } from '../helpers/response-status'
@@ -33,7 +35,10 @@ export default class User {
 
       delete newUser.password
 
-      return res.status(201).json(newUser)
+      // Generate token
+      const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET_ID, { expiresIn: '1d' })
+
+      return res.status(201).json({ newUser, token })
     } catch (error) {
       return serverError(res, error)
     }
@@ -65,7 +70,10 @@ export default class User {
 
       delete user.password
 
-      return success(res, { user })
+      // Generate token
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET_ID, { expiresIn: '1d' })
+
+      return success(res, { user, token })
     } catch (error) {
       return serverError(res, error)
     }
