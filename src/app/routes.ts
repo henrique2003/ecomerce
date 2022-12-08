@@ -2,6 +2,7 @@ import { Router } from 'express'
 
 import Products from './controllers/product'
 import User from './controllers/user'
+import { auth } from './middlewares/auth'
 
 const routes = Router()
 
@@ -15,5 +16,6 @@ routes.post('/products', products.create)
 // User
 routes.post('/user/register', user.register)
 routes.post('/user/login', user.login)
+routes.put('/user/cart/add', auth, user.addProductOnCart)
 
 export default routes

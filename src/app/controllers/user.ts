@@ -19,7 +19,7 @@ export default class User {
         return badRequest(res, 'Email inválido')
       }
 
-      if (prismaClient.user.findUnique({ where: { email } })) {
+      if (await prismaClient.user.findUnique({ where: { email } })) {
         return badRequest(res, 'Email já esta em uso')
       }
 
@@ -74,6 +74,49 @@ export default class User {
 
       return success(res, { user, token })
     } catch (error) {
+      return serverError(res, error)
+    }
+  }
+
+  public async addProductOnCart (req: Request, res: Response): Promise<Response> {
+    try {
+      const { userId, body } = req
+
+      const { productId } = body
+
+      // Validation
+      if (typeof parseInt(productId) !== 'number') {
+        return badRequest(res, 'Id do produto inválido')
+      }
+
+      // Verify if exist product
+      const product = await prismaClient.product.findUnique({ where: { id: parseInt(productId) } })
+
+      if (!product) {
+        return badRequest(res, 'Produto inválido')
+      }
+
+      // Update cart from user
+      const user = await prismaClient.user.update({
+        where: { id: userId },
+        data: {
+          cart: {
+            set: {
+              id: product.id
+            }
+          }
+        },
+        include: {
+          cart: true
+        }
+      })
+
+      delete user.password
+
+      return success(res, user)
+    } catch (error) {
+      console.log(error.message)
+
       return serverError(res, error)
     }
   }

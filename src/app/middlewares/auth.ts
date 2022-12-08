@@ -14,7 +14,7 @@ export function auth (req: Request, res: Response, next: NextFunction): Response
   try {
     const [, token] = authToken.split(' ')
 
-    const { id } = verify(token, process.env.JWT_SECRET_ID) as { id: string }
+    const { id } = verify(token, process.env.JWT_SECRET_ID) as { id: number }
 
     req.userId = id
 
