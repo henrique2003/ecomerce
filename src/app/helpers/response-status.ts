@@ -12,6 +12,10 @@ export function success (res: Response, data: any): Response {
   return res.status(200).json(data)
 }
 
+export function createSuccess (res: Response, data: any): Response {
+  return res.status(201).json(data)
+}
+
 export function unauthorized (res: Response): Response {
   return res.status(401).json({ message: 'Não autorizado' })
 }

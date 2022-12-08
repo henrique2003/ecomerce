@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import validator from 'validator'
 
 import prismaClient from '../prisma'
-import { serverError, badRequest, success } from '../helpers/response-status'
+import { serverError, badRequest, success, createSuccess } from '../helpers/response-status'
 import generateToken from '../utils/generateToken'
 
 export default class User {
@@ -37,7 +37,7 @@ export default class User {
       // Generate token
       const token = generateToken(newUser.id)
 
-      return res.status(201).json({ newUser, token })
+      return createSuccess(res, { newUser, token })
     } catch (error) {
       return serverError(res, error)
     }

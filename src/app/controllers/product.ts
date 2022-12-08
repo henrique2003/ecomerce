@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
 import prismaClient from '../prisma/index'
-import { serverError, success } from '../helpers/response-status'
+import { serverError, success, createSuccess } from '../helpers/response-status'
 
 export default class Products {
   public async get (req: Request, res: Response): Promise<Response> {
@@ -26,7 +26,7 @@ export default class Products {
         }
       })
 
-      return res.status(201).json(product)
+      return createSuccess(res, product)
     } catch (error) {
       return serverError(res, error)
     }
