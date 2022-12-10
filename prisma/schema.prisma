@@ -15,16 +15,33 @@ model User {
   email    String @unique
   password String
 
-  cart Product[]
-
-  @@map("users")
+  Transaction Transaction[]
 }
 
 model Product {
-  id     String @id @unique
-  title  String
-  cost   Float
-  type   String
-  User   User?  @relation(fields: [userId], references: [id])
-  userId Int?
+  id    String @id @unique
+  title String
+  cost  Float
+  type  String
+
+  Transaction Transaction[]
 }
+
+model Transaction {
+  id        String @id @unique
+  userId    Int
+  productId String
+
+  products Product @relation(fields: [productId], references: [id])
+  user_id  User    @relation(fields: [userId], references: [id])
+}
+
+// id 1 userId 23 productId 2
+// id 1 userId 23 productId 1
+// id 1 userId 23 productId 3
+
+// 3 user - 1 cart
+// 4 user - 1 cart
+// 5 user - 1 cart
+
+// 1 tinder,playstation,xbox 23

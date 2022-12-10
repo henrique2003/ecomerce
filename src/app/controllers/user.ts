@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import validator from 'validator'
+import { v4 as uuidv4 } from 'uuid'
 
 import prismaClient from '../prisma'
 import { serverError, badRequest, success, createSuccess } from '../helpers/response-status'
@@ -93,68 +94,42 @@ export default class User {
         return badRequest(res, 'Produto inválido')
       }
 
-      const { id, cost, title, type } = product
-
       // Update cart from user
-      const updatedUser = await prismaClient.user.update({
-        where: { id: userId },
+      const transaction = await prismaClient.transaction.create({
         data: {
-          cart: {
-            connectOrCreate: {
-              where: { id },
-              create: {
-                cost,
-                id,
-                title,
-                type
-              }
-            }
-          }
+          id: uuidv4(),
+          userId,
+          productId
+        },
+        include: {
+          products: true
         }
       })
 
-      return success(res, updatedUser)
+      return success(res, transaction)
     } catch (error) {
-      console.log(error.message)
-
       return serverError(res, error)
     }
   }
 
-  // public async removeProductOnCart (req: Request, res: Response): Promise<Response> {
-  //   try {
-  //     const { userId, body } = req
+  public async removeProductOnCart (req: Request, res: Response): Promise<Response> {
+    try {
+      const { transactionId } = req.body
 
-  //     let { productId } = body
+      // Verify if exist product
+      if (!await prismaClient.transaction.findUnique({ where: { id: transactionId } })) {
+        return badRequest(res, 'Transação inválida')
+      }
 
-  //     productId = productId.toString()
+      await prismaClient.transaction.delete({
+        where: { id: transactionId }
+      })
 
-  //     // Verify if exist product
-  //     if (!await prismaClient.product.findUnique({ where: { id: productId } })) {
-  //       return badRequest(res, 'Produto inválido')
-  //     }
-  //     console.log('1')
-
-  //     // Update cart from user
-  //     const user = await prismaClient.user.update({
-  //       where: { id: userId },
-  //       data: {
-  //         cart: {
-  //           delete: {
-  //             id: productId
-  //           }
-  //         }
-  //       },
-  //       select: {
-  //         password: false
-  //       }
-  //     })
-
-  //     return res.status(202).json(user)
-  //   } catch (error) {
-  //     return serverError(res, error)
-  //   }
-  // }
+      return res.status(202).json({ message: 'Produto removido' })
+    } catch (error) {
+      return serverError(res, error)
+    }
+  }
 
   public async loadUser (req: Request, res: Response): Promise<Response> {
     try {
@@ -163,7 +138,11 @@ export default class User {
           id: req.userId
         },
         include: {
-          cart: true
+          Transaction: {
+            include: {
+              products: true
+            }
+          }
         }
       })
       delete user.password
