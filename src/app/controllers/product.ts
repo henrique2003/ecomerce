@@ -7,7 +7,7 @@ import { serverError, success, createSuccess } from '../helpers/response-status'
 export default class Products {
   public async get (req: Request, res: Response): Promise<Response> {
     try {
-      const products = await prismaClient.product.findMany({})
+      const products = await prismaClient.product.findMany()
 
       return success(res, products)
     } catch (error) {
