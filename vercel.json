@@ -1,8 +1,10 @@
 {
+  "name": "gifts-gg-backend",
   "version": 2,
+  "public": true,
   "build": [
     {
-      "src": "./dist/server.js",
+      "src": "./src/server.ts",
       "user": "@vercel/node"
     }
   ],
