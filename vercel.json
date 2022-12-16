@@ -2,6 +2,7 @@
   "name": "gifts-gg-backend",
   "version": 2,
   "public": true,
+  "buildComand": "yarn tsc",
   "build": [
     {
       "src": "./src/server.ts",
