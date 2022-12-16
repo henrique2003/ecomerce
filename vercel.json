@@ -4,7 +4,7 @@
   "public": true,
   "build": [
     {
-      "src": "./src/server.ts",
+      "src": "src/server.ts",
       "user": "@vercel/node"
     }
   ],
