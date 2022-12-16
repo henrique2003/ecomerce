@@ -17,6 +17,7 @@ class App {
     this.express.use(cors())
     this.express.use(helmet())
     this.express.use('/api', routes)
+    this.express.use(express.static('public'))
   }
 }
 
